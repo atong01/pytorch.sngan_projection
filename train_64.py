@@ -236,9 +236,10 @@ def main():
     # CUDA setting
     if not torch.cuda.is_available():
         raise ValueError("Should buy GPU!")
+    print("Num Devices Available: ", torch.cuda.device_count())
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
-    device = torch.device('cuda')
+    device = torch.device('cuda', 1)
     torch.set_default_tensor_type('torch.cuda.FloatTensor')
     torch.backends.cudnn.benchmark = True
 
@@ -258,7 +259,7 @@ def main():
     train_loader = iter(data.DataLoader(
         train_dataset, args.batch_size,
         sampler=InfiniteSamplerWrapper(train_dataset),
-        num_workers=args.num_workers, pin_memory=True)
+        num_workers=args.num_workers, pin_memory=False)
     )
     if args.calc_FID:
         eval_dataset = datasets.ImageFolder(
@@ -270,7 +271,7 @@ def main():
         eval_loader = iter(data.DataLoader(
             eval_dataset, args.batch_size,
             sampler=InfiniteSamplerWrapper(eval_dataset),
-            num_workers=args.num_workers, pin_memory=True)
+            num_workers=args.num_workers, pin_memory=False)
         )
     else:
         eval_loader = None
